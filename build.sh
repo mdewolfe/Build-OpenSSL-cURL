@@ -6,10 +6,10 @@ cd openssl
 cd ..
 
 echo
-#echo "Building Curl"
-#cd curl
-#./libcurl-build.sh
-#cd ..
+echo "Building Curl"
+cd curl
+./libcurl-build.sh
+cd ..
 
 echo
 echo "Libraries..."
