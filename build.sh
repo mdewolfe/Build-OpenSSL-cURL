@@ -6,12 +6,12 @@ cd openssl
 cd ..
 
 echo
-echo "Building Curl"
-cd curl
-./libcurl-build.sh
-cd ..
+#echo "Building Curl"
+#cd curl
+#./libcurl-build.sh
+#cd ..
 
-echo 
+echo
 echo "Libraries..."
 xcrun -sdk iphoneos lipo -info openssl/*/lib/*.a
-xcrun -sdk iphoneos lipo -info curl/lib/*.a
+#xcrun -sdk iphoneos lipo -info curl/lib/*.a
