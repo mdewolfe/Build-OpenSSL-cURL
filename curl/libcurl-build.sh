@@ -101,7 +101,7 @@ buildIOS()
 	popd > /dev/null
 }
 
-printf "\e[1;36m[*]Cleaning up\e[0m\n"
+printf "\e[1;36m[*]CLEANING UP\e[0m\n"
 rm -rf include/ lib/
 
 mkdir -p lib
@@ -144,8 +144,5 @@ lipo \
 printf "\e[1;36m[*] CLEANING UP\e[0m\n"
 rm -rf /tmp/${CURL_VERSION}-*
 rm -rf ${CURL_VERSION}
-
-printf "\e[1;36m[X]CHECKING LIBRARIES\e[0m\n"
-xcrun -sdk iphoneos lipo -info lib/*.a
 
 printf "\e[1;32m[*]FINISHED BUILDING cURL\e[0m\n"

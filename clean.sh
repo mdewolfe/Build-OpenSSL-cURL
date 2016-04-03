@@ -1,3 +1,8 @@
 #!/bin/bash
-echo "Cleaning Build-OpenSSL-cURL"
-rm -fr curl/curl-* curl/include curl/lib openssl/openssl-1* openssl/Mac openssl/iOS openssl/tvO
+
+printf "\e[1;36m*** CLEANING OpenSSL & cURL BUILDS ***\e[0m\n"
+rm -fr \
+	curl/curl-*.log \
+	curl/include \
+	curl/lib \
+	openssl/iOS

@@ -1,3 +1,6 @@
 .DS_Store
 *.log
+curl/lib/libcurl.a
+openssl/iOS/lib/libcrypto.a
+openssl/iOS/lib/libssl.a
 
