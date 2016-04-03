@@ -110,7 +110,7 @@ buildIOS()
 	popd > /dev/null
 }
 
-echo "Cleaning up"
+printf "\e[1;36m[*] CLEANING UP\e[0m\n"
 rm -rf iOS
 
 mkdir -p iOS/lib
@@ -126,7 +126,7 @@ if [ ! -e ${OPENSSL_VERSION}.tar.gz ]; then
 	printf "\e[1;31m[X] OpenSSL Version ${OPENSSL_VERSION} is missing.\e[0m\n"
 	exit 1
 else
-	printf "\e[1;36m[*] Using ${OPENSSL_VERSION}.tar.gz\e[0m\n"
+	printf "\e[1;36m[*] USING ${OPENSSL_VERSION}.tar.gz\e[0m\n"
 fi
 
 printf "\e[1;36m[*] UNPACKING OPENSSL\e[0m\n"
