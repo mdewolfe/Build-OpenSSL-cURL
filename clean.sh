@@ -5,4 +5,5 @@ rm -fr \
 	curl/curl-*.log \
 	curl/include \
 	curl/lib \
-	openssl/iOS
+	openssl/iOS \
+	openssl/*.log

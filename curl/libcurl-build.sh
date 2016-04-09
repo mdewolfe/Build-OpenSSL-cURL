@@ -63,7 +63,7 @@ buildIOS()
 	export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 	export CROSS_SDK="${PLATFORM}${IOS_SDK_VERSION}.sdk"
 	export BUILD_TOOLS="${DEVELOPER}"
-	export CC="${BUILD_TOOLS}/usr/bin/gcc"
+	export CC="$(which clang)"
 	export CFLAGS="-arch ${ARCH} -pipe -Os -gdwarf-2 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -miphoneos-version-min=${IOS_MIN_SDK_VERSION}"
 	export LDFLAGS="-arch ${ARCH} -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -L${OPENSSL}/iOS/lib"
 
@@ -95,14 +95,21 @@ buildIOS()
 			--host="${ARCH}-apple-darwin" &> ${LOG_FILE}
 	fi
 
-	make -j8 >> ${LOG_FILE} 2>&1
+	NUM_JOBS=$(sysctl -n hw.activecpu)
+	make -j${NUM_JOBS} >> ${LOG_FILE} 2>&1
 	make install >> ${LOG_FILE} 2>&1
 	make clean >> ${LOG_FILE} 2>&1
 	popd > /dev/null
 }
 
+clean_log() {
+	rm -rf "*.log"
+}
+
 printf "\e[1;36m[*]CLEANING UP\e[0m\n"
 rm -rf include/ lib/
+
+clean_log
 
 mkdir -p lib
 mkdir -p include/
@@ -144,5 +151,6 @@ lipo \
 printf "\e[1;36m[*] CLEANING UP\e[0m\n"
 rm -rf /tmp/${CURL_VERSION}-*
 rm -rf ${CURL_VERSION}
+clean_log
 
 printf "\e[1;32m[*]FINISHED BUILDING cURL\e[0m\n"

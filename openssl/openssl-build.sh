@@ -17,8 +17,7 @@
 
 set -e
 
-usage ()
-{
+usage() {
 	echo "usage: $0 [iOS SDK version (defaults to latest)] [tvOS SDK version (defaults to latest)]"
 	exit 127
 }
@@ -41,11 +40,8 @@ fi
 OPENSSL_VERSION="openssl-1.0.2g"
 DEVELOPER=`xcode-select -print-path`
 
-buildMac()
-{
+buildMac() {
 	ARCH=$1
-
-	echo "Building ${OPENSSL_VERSION} for ${ARCH}"
 
 	TARGET="darwin-i386-cc"
 
@@ -57,7 +53,12 @@ buildMac()
 
 	pushd . > /dev/null
 	cd "${OPENSSL_VERSION}"
-	./Configure no-asm ${TARGET} --openssldir="/tmp/${OPENSSL_VERSION}-${ARCH}" &> "/tmp/${OPENSSL_VERSION}-${ARCH}.log"
+
+	printf "\e[1;36m[*] BUILDING OpenSSL (version ${OPENSSL_VERSION}) FOR Mac OSX ${ARCH}\e[0m\n"
+
+	./Configure \
+		no-asm ${TARGET} \
+		--openssldir="/tmp/${OPENSSL_VERSION}-${ARCH}" &> "/tmp/${OPENSSL_VERSION}-${ARCH}.log"
 	make >> "/tmp/${OPENSSL_VERSION}-${ARCH}.log" 2>&1
 	make install_sw >> "/tmp/${OPENSSL_VERSION}-${ARCH}.log" 2>&1
 	make clean >> "/tmp/${OPENSSL_VERSION}-${ARCH}.log" 2>&1
@@ -85,7 +86,7 @@ buildIOS()
 	export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 	export CROSS_SDK="${PLATFORM}${IOS_SDK_VERSION}.sdk"
 	export BUILD_TOOLS="${DEVELOPER}"
-	export CC="${BUILD_TOOLS}/usr/bin/gcc -arch ${ARCH}"
+	export CC="$(which clang) -arch ${ARCH}"
 
 	printf "\e[1;36m[*] BUILDING ${OPENSSL_VERSION} FOR ${PLATFORM} ${IOS_SDK_VERSION} ${ARCH}\e[0m\n"
 
@@ -104,14 +105,21 @@ buildIOS()
 	# add -isysroot to CC=
 	sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -miphoneos-version-min=${IOS_MIN_SDK_VERSION} !" "Makefile"
 
-	make >> ${LOG_FILE} 2>&1
+	NUM_JOBS=$(sysctl -n hw.activecpu)
+	make -j ${NUM_JOBS} >> ${LOG_FILE} 2>&1
 	make install_sw >> ${LOG_FILE} 2>&1
 	make clean >> ${LOG_FILE} 2>&1
 	popd > /dev/null
 }
 
+clean_log() {
+	rm -rf "*.log" > /dev/null
+}
+
 printf "\e[1;36m[*] CLEANING UP\e[0m\n"
 rm -rf iOS
+
+clean_log
 
 mkdir -p iOS/lib
 mkdir -p iOS/include/
@@ -160,5 +168,6 @@ lipo \
 printf "\e[1;36m[*] CLEANING UP\e[0m\n"
 rm -rf /tmp/${OPENSSL_VERSION}-*
 rm -rf ${OPENSSL_VERSION}
+clean_log
 
 printf "\e[1;32m[*]FINISHED BUILDING OPENSSL\e[0m\n"
